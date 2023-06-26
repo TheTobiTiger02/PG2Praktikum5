@@ -53,7 +53,7 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
 
     shared_ptr<Booking> booking;
     for (int i = startRow; i < data.size(); i++) {
-
+        std::vector<std::string> predecessors;
         try {
             if (data.at(i)["type"].is_null() || data.at(i)["type"].empty() ||
                 data.at(i)["type"].get<string>().length() == 0) {
@@ -77,6 +77,13 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
             if (data.at(i)["travelId"].is_null() || data.at(i)["travelId"].empty()) {
                 throw runtime_error("Leeres Attribut 'travelId' in Zeile " + to_string(i + 1));
             }
+            if(!data.at(i)["predecessor1"].is_null() && !data.at(i)["predecessor1"].empty()){
+                predecessors.push_back(data.at(i)["predecessor1"]);
+            }
+            if(!data.at(i)["predecessor2"].is_null() && !data.at(i)["predecessor2"].empty()){
+                predecessors.push_back(data.at(i)["predecessor2"]);
+            }
+
             type = data.at(i)["type"];
             id = data.at(i)["id"];
 
@@ -129,7 +136,7 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
                     throw runtime_error("Leeres Attribut 'toDestLongitude' in Zeile " + to_string(i + 1));
                 }
 
-                booking = shared_ptr<FlightBooking>(new FlightBooking(id, price, fromDate, toDate, travelId, data.at(i)["fromDest"],
+                booking = std::shared_ptr<FlightBooking>(new FlightBooking(id, price, fromDate, toDate, travelId, predecessors, data.at(i)["fromDest"],
                                             data.at(i)["toDest"], data.at(i)["airline"],
                                             bookingClasses[data.at(i)["bookingClass"]],
                                             data.at(i)["fromDestLongitude"].get<string>() + "," + data.at(i)["fromDestLatitude"].get<string>(),
@@ -158,7 +165,7 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
                     data.at(i)["hotelLongitude"].get<string>().length() == 0) {
                     throw runtime_error("Leeres Attribut 'hotelLongitude' in Zeile " + to_string(i + 1));
                 }
-                booking = shared_ptr<HotelBooking>(new HotelBooking(id, price, fromDate, toDate, travelId, data.at(i)["hotel"],
+                booking = std::shared_ptr<HotelBooking>(new HotelBooking(id, price, fromDate, toDate, travelId, predecessors, data.at(i)["hotel"],
                                            data.at(i)["town"], roomTypes[data.at(i)["roomType"]], data.at(i)["hotelLongitude"].get<string>() + "," + data.at(i)["hotelLatitude"].get<string>()));
                 hotelCount++;
                 totalPrice += price;
@@ -195,7 +202,7 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
                     data.at(i)["returnLongitude"].get<string>().length() == 0) {
                     throw runtime_error("Leeres Attribut 'returnLongitude' in Zeile " + to_string(i + 1));
                 }
-                booking = shared_ptr<RentalCarReservation> (new RentalCarReservation(id, price, fromDate, toDate, travelId, data.at(i)["pickupLocation"],
+                booking = std::shared_ptr<RentalCarReservation> (new RentalCarReservation(id, price, fromDate, toDate, travelId, predecessors, data.at(i)["pickupLocation"],
                                                    data.at(i)["returnLocation"], data.at(i)["company"],
                                                    data.at(i)["vehicleClass"], data.at(i)["pickupLongitude"].get<string>() + "," + data.at(i)["pickupLatitude"].get<string>(),
                                                    data.at(i)["returnLongitude"].get<string>() + "," + data.at(i)["returnLatitude"].get<string>()));
@@ -213,7 +220,7 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
 
             shared_ptr<Travel> travel;
             if (findTravel(travelId) == nullptr) {
-                travel = shared_ptr<Travel> (new Travel(travelId, customerId));
+                travel = std::shared_ptr<Travel> (new Travel(travelId, customerId));
                 travel->addBooking(booking);
                 allTravels.push_back(std::shared_ptr<Travel>(travel));
                 travelCount++;
@@ -222,7 +229,7 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
             }
 
             if (findCustomer(customerId) == nullptr) {
-                shared_ptr<Customer> customer = shared_ptr<Customer> (new Customer(customerId, data.at(i)["customerName"]));
+                shared_ptr<Customer> customer = std::shared_ptr<Customer> (new Customer(customerId, data.at(i)["customerName"]));
                 customer->addTravel(travel);
                 allCustomers.push_back(std::shared_ptr<Customer>(customer));
                 customerCount++;

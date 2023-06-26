@@ -537,7 +537,7 @@ void TravelAgencyUI::onAddBooking() {
             std::string bookingId = QUuid::createUuid().toString().toStdString();
             if(addedBooking == "Flight"){
                 booking = std::shared_ptr<Booking>(new FlightBooking(bookingId, price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                            travelId, travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
+                                            travelId, {}, travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
                                             travelAgency->getIataCode(toDestCombobox->currentText().toStdString()),
                                             airline->text().toStdString(), bookingClass->currentText().toStdString(),
                                             fromDestLongitude->text().toStdString() + "," + fromDestLatitude->text().toStdString(), toDestLongitude->text().toStdString()
@@ -546,13 +546,13 @@ void TravelAgencyUI::onAddBooking() {
             }
             else if(addedBooking == "Hotel"){
                 booking = std::shared_ptr<Booking>(new HotelBooking(bookingId,  price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                    travelId, hotel->text().toStdString(), town->text().toStdString(),
+                                                                    travelId, {}, hotel->text().toStdString(), town->text().toStdString(),
                                                                     roomType->currentText().toStdString(),
                                                                     hotelLongitude->text().toStdString() + "," + hotelLatitude->text().toStdString()));
             }
             else{
                 booking = std::shared_ptr<Booking>(new RentalCarReservation(bookingId,  price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                            travelId, pickupLocation->text().toStdString(), returnLocation->text().toStdString(),
+                                                                            travelId, {}, pickupLocation->text().toStdString(), returnLocation->text().toStdString(),
                                                                             company->text().toStdString(), vehicleClass->text().toStdString(),
                                                                             pickupLongitude->text().toStdString() + "," + pickupLatitude->text().toStdString(),
                                                                             returnLongitude->text().toStdString() + "," + returnLatitude->text().toStdString()));
@@ -702,7 +702,7 @@ void TravelAgencyUI::onAddBooking() {
             if(addedBooking == "Flight"){
 
                 booking = std::shared_ptr<Booking>(new FlightBooking(bookingId, price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                     travelId, travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
+                                                                     travelId, {}, travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
                                                                      travelAgency->getIataCode(toDestCombobox->currentText().toStdString()),
                                                                      airline->text().toStdString(), bookingClass->currentText().toStdString(),
                                                                      fromDestLongitude->text().toStdString() + "," + fromDestLatitude->text().toStdString(), toDestLongitude->text().toStdString()
@@ -711,13 +711,14 @@ void TravelAgencyUI::onAddBooking() {
             else if(addedBooking == "Hotel"){
                 std::cout << hotelLongitude->text().toStdString();
                 booking = std::shared_ptr<Booking>(new HotelBooking(bookingId,  price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                    travelId, hotel->text().toStdString(), town->text().toStdString(),
+                                                                    travelId, {}, hotel->text().toStdString(), town->text().toStdString(),
                                                                     roomType->currentText().toStdString(),
                                                                     hotelLongitude->text().toStdString() + "," + hotelLatitude->text().toStdString()));
             }
             else{
+                //TODO add Predecessors
                 booking = std::shared_ptr<Booking>(new RentalCarReservation(bookingId,  price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                            travelId, pickupLocation->text().toStdString(), returnLocation->text().toStdString(),
+                                                                            travelId, {}, pickupLocation->text().toStdString(), returnLocation->text().toStdString(),
                                                                             company->text().toStdString(), vehicleClass->text().toStdString(),
                                                                             pickupLongitude->text().toStdString() + "," + pickupLatitude->text().toStdString(),
                                                                             returnLongitude->text().toStdString() + "," + returnLatitude->text().toStdString()));

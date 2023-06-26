@@ -9,12 +9,13 @@
 using namespace std;
 
 RentalCarReservation::RentalCarReservation(std::string id, double price, std::string fromDate, std::string toDate,
-                                           long travelId,
+                                           long travelId, std::vector<std::string> predecessors,
                                            std::string _pickupLocation, std::string _returnLocation,
                                            std::string _company, std::string _vehicleClass,
-                                           std::string pickupCoordinates, std::string returnCoordinates): Booking(id, price,fromDate, toDate,travelId),
+                                           std::string pickupCoordinates, std::string returnCoordinates): Booking(id, price,fromDate, toDate,travelId, predecessors),
                                            pickupLocation(_pickupLocation), returnLocation(_returnLocation), company(_company), vehicleClass(_vehicleClass),
                                            pickupCoordinates(pickupCoordinates), returnCoordinates(returnCoordinates){
+
 }
 
 RentalCarReservation::~RentalCarReservation() {

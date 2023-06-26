@@ -18,7 +18,7 @@ private:
     std::string hotelCoordinates;
 
 public:
-    HotelBooking(std::string id, double price, std::string fromDate, std::string toDate, long travelId,
+    HotelBooking(std::string id, double price, std::string fromDate, std::string toDate, long travelId, std::vector<std::string> predecessors,
                  std::string _hotel, std::string _town, std::string _roomType, std::string hotelCoordinates);
 
     ~HotelBooking();
