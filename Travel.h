@@ -10,6 +10,8 @@
 #include <vector>
 #include <QDate>
 #include "Booking.h"
+#include "graph.h"
+#include "algorithmen.cpp"
 
 
 class Travel {
@@ -18,6 +20,7 @@ private:
     long id;
     long customerId;
     std::vector<std::shared_ptr<Booking>> travelBookings;
+    Graph<std::shared_ptr<Booking>, 10>* graph;
 
 public:
     Travel(long _id, long _customerId);
@@ -33,6 +36,13 @@ public:
     QDate getStartDate();
 
     QDate getEndDate();
+
+    void topologicalSort();
+
+    bool checkRoundTrip();
+    bool checkEnoughHotels();
+    bool checkNoUselessHotels();
+    bool checkNoUselessRentalCars();
 
 };
 

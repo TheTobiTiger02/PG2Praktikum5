@@ -37,7 +37,7 @@ TravelAgencyUI::TravelAgencyUI(std::shared_ptr<TravelAgency> _travelAgency, QWid
     connect(ui->actionHinzuf_gen, SIGNAL(triggered(bool)), this, SLOT(onAddCustomer()));
     connect(ui->actionHinzuf_gen_2, SIGNAL(triggered(bool)), this, SLOT(onAddBooking()));
     connect(ui->actionSpeichern, SIGNAL(triggered(bool)), this, SLOT(onSaveBookings()));
-
+    connect(ui->actionPruefen, SIGNAL(triggered(bool)), this, SLOT(onCheckTravels()));
 
     ui->customerGroupBox->setVisible(false);
     ui->customerTravelsTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -780,4 +780,7 @@ void TravelAgencyUI::onSaveBookings() {
     }
 }
 
+void TravelAgencyUI::onCheckTravels() {
+
+}
 

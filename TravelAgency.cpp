@@ -534,10 +534,10 @@ std::string TravelAgency::getRoomTypeAcronym(std::string roomType) {
 bool TravelAgency::saveToJson(SortFunktor funktor, std::string filePath) {
     std::sort(allBookings.begin(), allBookings.end(), funktor);
 
-    json bookingJson;
     json bookingListJson;
 
     for(auto b : allBookings){
+        json bookingJson;
         bookingJson["id"] = b->getId();
         bookingJson["price"] = b->getPrice();
         bookingJson["fromDate"] = b->getFromDate().toString("yyyyMMdd").toStdString();
@@ -553,12 +553,6 @@ bool TravelAgency::saveToJson(SortFunktor funktor, std::string filePath) {
             bookingJson["fromDest"] = flightBooking->getFromDestination();
             bookingJson["toDest"] = flightBooking->getToDestination();
             bookingJson["airline"] = flightBooking->getAirline();
-            //std::cout << "\n" << getBookingClassChar(flightBooking->getBookingClass());
-            std::string test2 = getBookingClassChar(flightBooking->getBookingClass());
-            //std::cout << test2;
-
-
-
             bookingJson["bookingClass"] = getBookingClassChar(flightBooking->getBookingClass());
             bookingJson["fromDestLongitude"] = QString::fromStdString(flightBooking->getFromDestCoordinates()).split(",")[0].toStdString();
             bookingJson["fromDestLatitude"] = QString::fromStdString(flightBooking->getFromDestCoordinates()).split(",")[1].toStdString();

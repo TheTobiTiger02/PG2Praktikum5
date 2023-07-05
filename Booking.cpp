@@ -57,4 +57,8 @@ void Booking::setTravelId(long travelId) {
     Booking::travelId = travelId;
 }
 
+const std::vector<std::string> &Booking::getPredecessors() const {
+    return predecessors;
+}
+
 

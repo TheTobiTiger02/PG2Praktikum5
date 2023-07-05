@@ -608,9 +608,16 @@
     <addaction name="actionHinzuf_gen_2"/>
     <addaction name="actionSpeichern"/>
    </widget>
+   <widget class="QMenu" name="menuReisen">
+    <property name="title">
+     <string>Reisen</string>
+    </property>
+    <addaction name="actionPruefen"/>
+   </widget>
    <addaction name="menuDatei"/>
    <addaction name="menuKund_Innen"/>
    <addaction name="menuBuchungen"/>
+   <addaction name="menuReisen"/>
   </widget>
   <action name="actionEinlesen">
    <property name="text">
@@ -643,6 +650,11 @@
   <action name="actionSpeichern">
    <property name="text">
     <string>Speichern</string>
+   </property>
+  </action>
+  <action name="actionPruefen">
+   <property name="text">
+    <string>Prüfen</string>
    </property>
   </action>
  </widget>

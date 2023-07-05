@@ -27,6 +27,8 @@ public:
 
     std::string &getId();
 
+    const std::vector<std::string> &getPredecessors() const;
+
     double getPrice() const;
 
     QDate getFromDate() const;
