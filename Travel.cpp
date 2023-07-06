@@ -152,51 +152,58 @@ bool Travel::checkEnoughHotels() {
 
 bool Travel::checkNoUselessHotels() {
     QDate currentStartDate, currentEndDate;
-    for(int i = travelBookings.size(); i > 0; i--){
+    for(int i = travelBookings.size() - 1; i > 0; i--){
         if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(travelBookings[i])){
             continue;
         }
         std::shared_ptr<Booking> currentBooking = travelBookings[i];
-        if(!currentBooking->getPredecessor1().empty()){
-            if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(findBooking(currentBooking->getPredecessor1()))){
+        std::shared_ptr<Booking> predecessor1 = findBooking(currentBooking->getPredecessor1());
+        std::shared_ptr<Booking> predecessor2 = findBooking(currentBooking->getPredecessor2());
+
+        if(predecessor1 != nullptr){
+            if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(predecessor1)){
 
             }
             else{
-                if(findBooking(currentBooking->getPredecessor1())->getFromDate() < currentBooking->getFromDate()){
-                    return false;
+                if(getBookingType(currentBooking) == getBookingType(predecessor1)){
+
                 }
+                else{
+                    if(predecessor1->getFromDate() < currentBooking->getFromDate()){
+                        return true;
+                    }
+                    if(predecessor1->getToDate() > currentBooking->getToDate()){
+                        return true;
+                    }
+
+                }
+
             }
         }
-        if(!currentBooking->getPredecessor2().empty()){
-            if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(findBooking(currentBooking->getPredecessor2()))){
+        if(predecessor2 != nullptr){
+            if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(predecessor2)){
 
             }
             else{
-                if(findBooking(currentBooking->getPredecessor2())->getFromDate() < currentBooking->getFromDate()){
-                    return false;
+                if(getBookingType(currentBooking) == getBookingType(predecessor2)) {
+
                 }
+                else {
+                    if(predecessor2->getFromDate() < currentBooking->getFromDate()){
+                        return true;
+                    }
+                    if(predecessor1->getToDate() > currentBooking->getToDate()){
+                        return true;
+                    }
+                }
+
             }
         }
-        /*currentStartDate = travelBookings[i]->getFromDate();
-        currentEndDate = travelBookings[i]->getToDate();
 
-        if(i - 1 > travelBookings.size()){
-            if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(travelBookings[i + 1])){
-                continue;
-            }
-            if(currentStartDate > travelBookings[i + 1]->getFromDate()){
-                return false;
-            }
-            if(currentEndDate > travelBookings[i + 1]->getToDate()){
-                return false;
-            }
-
-        }
-         */
 
 
     }
-    return true;
+    return false;
 }
 
 bool Travel::checkNoUselessRentalCars() {
@@ -233,4 +240,16 @@ std::shared_ptr<Booking> Travel::findBooking(std::string id) {
         }
     }
     return nullptr;
+}
+
+std::string Travel::getBookingType(std::shared_ptr<Booking> booking) {
+    if(std::shared_ptr<FlightBooking> flightBooking = dynamic_pointer_cast<FlightBooking>(booking)){
+        return "Flight";
+    }
+    if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(booking)){
+        return "Rental";
+    }
+    if(std::shared_ptr<HotelBooking> hotelBooking = dynamic_pointer_cast<HotelBooking>(booking)){
+        return "Hotel";
+    }
 }

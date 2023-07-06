@@ -46,6 +46,8 @@ public:
 
     std::shared_ptr<Booking> findBooking(std::string id);
 
+    std::string getBookingType(std::shared_ptr<Booking>);
+
 };
 
 
