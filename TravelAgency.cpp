@@ -605,6 +605,17 @@ std::string TravelAgency::abcAnalysis() {
         return "Es sind keine Kunden vorhanden";
     }
 
+    /*  Crash
+     * for(auto c : allCustomers){
+        double totalSumCustomer{};
+        for(auto t : c->getTravelList()){
+            for(auto b : t->getTravelBookings()){
+                totalSumCustomer += b->getPrice();
+            }
+        }
+        c->setTotalBookingPrice(totalSumCustomer);
+    }
+     */
 
     for(auto c : allCustomers){
         double totalSumCustomer{};
@@ -614,11 +625,8 @@ std::string TravelAgency::abcAnalysis() {
                     if(b->getTravelId() == t->getId()){
                         totalSumCustomer += b->getPrice();
                     }
-                    //std::cout << b->getPrice() << " ";
                 }
             }
-
-
 
         }
         //std::cout << "Test";
@@ -636,7 +644,7 @@ std::string TravelAgency::abcAnalysis() {
     int customerNum_B = customersNum * 0.1;
     int customerNum_C = customersNum * 0.1;
 
-    if(customerNum_A+customerNum_B+customerNum_C != customersNum){
+    while(customerNum_A+customerNum_B+customerNum_C != customersNum){
         customerNum_A++;
     }
 
