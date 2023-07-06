@@ -544,6 +544,12 @@ bool TravelAgency::saveToJson(SortFunktor funktor, std::string filePath) {
         bookingJson["fromDate"] = b->getFromDate().toString("yyyyMMdd").toStdString();
         bookingJson["toDate"] = b->getToDate().toString("yyyyMMdd").toStdString();
         bookingJson["travelId"] = b->getTravelId();
+        if(!b->getPredecessor1().empty()){
+            bookingJson["predecessor1"] = b->getPredecessor1();
+        }
+        if(!b->getPredecessor2().empty()){
+            bookingJson["predecessor2"] = b->getPredecessor2();
+        }
         std::shared_ptr<Travel> travel = findTravel(b->getTravelId());
         std::shared_ptr<Customer> customer = findCustomer(travel->getCustomerId());
         bookingJson["customerId"] = customer->getId();
@@ -595,10 +601,10 @@ bool TravelAgency::saveToJson(SortFunktor funktor, std::string filePath) {
 
 std::string TravelAgency::abcAnalysis() {
 
-    double totalSumCustomer;
 
+    std::cout << allCustomers[1]->getId();
     for(auto c : allCustomers){
-        totalSumCustomer = 0;
+        double totalSumCustomer{};
         for(auto t : c->getTravelList()){
             for(auto b : t->getTravelBookings()){
                 //std::cout << b->getPrice() << " ";
@@ -610,6 +616,7 @@ std::string TravelAgency::abcAnalysis() {
         //std::cout << "Test";
         c->setTotalBookingPrice(totalSumCustomer);
     }
+
 
     std::sort(allCustomers.begin(), allCustomers.end(), [](std::shared_ptr<Customer> a, std::shared_ptr<Customer> b){
         return a->getTotalBookingPrice() <= b->getTotalBookingPrice();

@@ -387,6 +387,8 @@ void TravelAgencyUI::onAddBooking() {
     QComboBox* toDestCombobox;
     QComboBox* bookingClass;
     QComboBox* roomType;
+    QComboBox* predecessor1;
+    QComboBox* predecessor2;
 
 
     QDialog dialog(this);
@@ -405,6 +407,7 @@ void TravelAgencyUI::onAddBooking() {
     QDateEdit* toDate = new QDateEdit(&dialog);
     toDate->setCalendarPopup(true);
     form.addRow("Ende", toDate);
+
 
     msgBox = new QMessageBox();
     msgBox->setWindowTitle("Buchung hinzufügen");
@@ -441,7 +444,6 @@ void TravelAgencyUI::onAddBooking() {
             addedBooking = "Flight";
 
             fromDestCombobox = new QComboBox(&dialog);
-            travelAgency->getIataCodes();
             for(auto a : travelAgency->getIataCodes()){
                 fromDestCombobox->addItem(QString::fromStdString(a.second->getName()));
             }
@@ -537,9 +539,9 @@ void TravelAgencyUI::onAddBooking() {
             std::shared_ptr<Booking> booking;
             long travelId = travelAgency->getNextTravelId();
             std::string bookingId = QUuid::createUuid().toString().toStdString();
-            /*if(addedBooking == "Flight"){
+            if(addedBooking == "Flight"){
                 booking = std::shared_ptr<Booking>(new FlightBooking(bookingId, price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                            travelId, {}, travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
+                                            travelId, "", "", travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
                                             travelAgency->getIataCode(toDestCombobox->currentText().toStdString()),
                                             airline->text().toStdString(), bookingClass->currentText().toStdString(),
                                             fromDestLongitude->text().toStdString() + "," + fromDestLatitude->text().toStdString(), toDestLongitude->text().toStdString()
@@ -548,18 +550,18 @@ void TravelAgencyUI::onAddBooking() {
             }
             else if(addedBooking == "Hotel"){
                 booking = std::shared_ptr<Booking>(new HotelBooking(bookingId,  price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                    travelId, {}, hotel->text().toStdString(), town->text().toStdString(),
+                                                                    travelId, "", "", hotel->text().toStdString(), town->text().toStdString(),
                                                                     roomType->currentText().toStdString(),
                                                                     hotelLongitude->text().toStdString() + "," + hotelLatitude->text().toStdString()));
             }
             else{
                 booking = std::shared_ptr<Booking>(new RentalCarReservation(bookingId,  price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                            travelId, {}, pickupLocation->text().toStdString(), returnLocation->text().toStdString(),
+                                                                            travelId, "", "", pickupLocation->text().toStdString(), returnLocation->text().toStdString(),
                                                                             company->text().toStdString(), vehicleClass->text().toStdString(),
                                                                             pickupLongitude->text().toStdString() + "," + pickupLatitude->text().toStdString(),
                                                                             returnLongitude->text().toStdString() + "," + returnLatitude->text().toStdString()));
             }
-             */
+
             long customerId = QInputDialog::getInt(this, "KundenId", "Zu welchem Kunden soll die Reise hinzugefügt werden");
             std::shared_ptr<Customer> customer = travelAgency->findCustomer(customerId);
             if(customer == nullptr){
@@ -598,6 +600,21 @@ void TravelAgencyUI::onAddBooking() {
                                                                                                QMessageBox::ActionRole));
         QAbstractButton *cancel = reinterpret_cast<QAbstractButton *>(msgBox->addButton("Abbrechen",
                                                                                         QMessageBox::ActionRole));
+
+        predecessor1 = new QComboBox(&dialog);
+        predecessor1->addItem("");
+        for(auto b : travel->getTravelBookings()){
+            predecessor1->addItem(QString::fromStdString(b->getId()));
+        }
+        form.addRow("Vorgängerbuchung1", predecessor1);
+
+        predecessor2 = new QComboBox(&dialog);
+        predecessor2->addItem("");
+        for(auto b : travel->getTravelBookings()){
+            predecessor2->addItem(QString::fromStdString(b->getId()));
+        }
+        form.addRow("Vorgängerbuchung2", predecessor2);
+
 
         msgBox->exec();
 
@@ -702,10 +719,10 @@ void TravelAgencyUI::onAddBooking() {
             }
             std::shared_ptr<Booking> booking;
             std::string bookingId = QUuid::createUuid().toString().toStdString();
-            /*if(addedBooking == "Flight"){
+            if(addedBooking == "Flight"){
 
                 booking = std::shared_ptr<Booking>(new FlightBooking(bookingId, price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                     travelId, {}, travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
+                                                                     travelId, predecessor1->currentText().toStdString(), predecessor2->currentText().toStdString(), travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
                                                                      travelAgency->getIataCode(toDestCombobox->currentText().toStdString()),
                                                                      airline->text().toStdString(), bookingClass->currentText().toStdString(),
                                                                      fromDestLongitude->text().toStdString() + "," + fromDestLatitude->text().toStdString(), toDestLongitude->text().toStdString()
@@ -714,19 +731,19 @@ void TravelAgencyUI::onAddBooking() {
             else if(addedBooking == "Hotel"){
                 std::cout << hotelLongitude->text().toStdString();
                 booking = std::shared_ptr<Booking>(new HotelBooking(bookingId,  price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                    travelId, {}, hotel->text().toStdString(), town->text().toStdString(),
+                                                                    travelId, predecessor1->currentText().toStdString(), predecessor2->currentText().toStdString(), hotel->text().toStdString(), town->text().toStdString(),
                                                                     roomType->currentText().toStdString(),
                                                                     hotelLongitude->text().toStdString() + "," + hotelLatitude->text().toStdString()));
             }
             else{
                 //TODO add Predecessors
                 booking = std::shared_ptr<Booking>(new RentalCarReservation(bookingId,  price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
-                                                                            travelId, {}, pickupLocation->text().toStdString(), returnLocation->text().toStdString(),
+                                                                            travelId, predecessor1->currentText().toStdString(), predecessor2->currentText().toStdString(), pickupLocation->text().toStdString(), returnLocation->text().toStdString(),
                                                                             company->text().toStdString(), vehicleClass->text().toStdString(),
                                                                             pickupLongitude->text().toStdString() + "," + pickupLatitude->text().toStdString(),
                                                                             returnLongitude->text().toStdString() + "," + returnLatitude->text().toStdString()));
             }
-             */
+
 
 
             travel->addBooking(booking);
