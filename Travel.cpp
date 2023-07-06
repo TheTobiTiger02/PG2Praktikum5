@@ -152,14 +152,35 @@ bool Travel::checkEnoughHotels() {
 
 bool Travel::checkNoUselessHotels() {
     QDate currentStartDate, currentEndDate;
-    for(int i = 0; i < travelBookings.size(); i++){
+    for(int i = travelBookings.size(); i > 0; i--){
         if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(travelBookings[i])){
             continue;
         }
-        currentStartDate = travelBookings[i]->getFromDate();
+        std::shared_ptr<Booking> currentBooking = travelBookings[i];
+        if(!currentBooking->getPredecessor1().empty()){
+            if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(findBooking(currentBooking->getPredecessor1()))){
+
+            }
+            else{
+                if(findBooking(currentBooking->getPredecessor1())->getFromDate() < currentBooking->getFromDate()){
+                    return false;
+                }
+            }
+        }
+        if(!currentBooking->getPredecessor2().empty()){
+            if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(findBooking(currentBooking->getPredecessor2()))){
+
+            }
+            else{
+                if(findBooking(currentBooking->getPredecessor2())->getFromDate() < currentBooking->getFromDate()){
+                    return false;
+                }
+            }
+        }
+        /*currentStartDate = travelBookings[i]->getFromDate();
         currentEndDate = travelBookings[i]->getToDate();
 
-        if(i + 1 < travelBookings.size()){
+        if(i - 1 > travelBookings.size()){
             if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(travelBookings[i + 1])){
                 continue;
             }
@@ -171,6 +192,7 @@ bool Travel::checkNoUselessHotels() {
             }
 
         }
+         */
 
 
     }
@@ -202,4 +224,13 @@ bool Travel::checkNoUselessRentalCars() {
 
     }
     return true;
+}
+
+std::shared_ptr<Booking> Travel::findBooking(std::string id) {
+    for(auto b : travelBookings){
+        if(b->getId() == id){
+            return b;
+        }
+    }
+    return nullptr;
 }

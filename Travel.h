@@ -44,6 +44,8 @@ public:
     bool checkNoUselessHotels();
     bool checkNoUselessRentalCars();
 
+    std::shared_ptr<Booking> findBooking(std::string id);
+
 };
 
 

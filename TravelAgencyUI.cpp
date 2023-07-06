@@ -804,6 +804,9 @@ void TravelAgencyUI::onSaveBookings() {
 void TravelAgencyUI::onCheckTravels() {
 
     TravelCheck* b = new TravelCheck(travelAgency);
+    for(auto b : travelAgency->findTravel(1)->getTravelBookings()){
+        std::cout << b->getId() << std::endl;
+    }
 }
 
 void TravelAgencyUI::onAbcAnalysis() {

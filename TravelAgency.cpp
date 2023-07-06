@@ -616,7 +616,7 @@ std::string TravelAgency::abcAnalysis() {
         c->setTotalBookingPrice(totalSumCustomer);
     }
      */
-
+    double totalSum{};
     for(auto c : allCustomers){
         double totalSumCustomer{};
         for(auto t : allTravels){
@@ -631,22 +631,23 @@ std::string TravelAgency::abcAnalysis() {
         }
         //std::cout << "Test";
         c->setTotalBookingPrice(totalSumCustomer);
+        totalSum += totalSumCustomer;
     }
 
 
 
     std::sort(allCustomers.begin(), allCustomers.end(), [](std::shared_ptr<Customer> a, std::shared_ptr<Customer> b){
-        return a->getTotalBookingPrice() <= b->getTotalBookingPrice();
+        return a->getTotalBookingPrice() >= b->getTotalBookingPrice();
     });
 
-    int customersNum = allCustomers.size();
-    int customerNum_A = customersNum * 0.8;
-    int customerNum_B = customersNum * 0.1;
-    int customerNum_C = customersNum * 0.1;
+    std::cout << totalSum;
 
-    while(customerNum_A+customerNum_B+customerNum_C != customersNum){
-        customerNum_A++;
-    }
+    //int customersNum = allCustomers.size();
+    int customerNum_A{};
+    int customerNum_B{};
+    int customerNum_C{};
+
+
 
     double totalSum_A{};
     double totalSum_B{};
@@ -654,13 +655,16 @@ std::string TravelAgency::abcAnalysis() {
 
 
     int i = 0;
-    for(i; i < customerNum_A; i++){
+    for(i;  allCustomers[i]->getTotalBookingPrice()  > totalSum * 0.8; i++){
+        customerNum_A++;
         totalSum_A += allCustomers[i]->getTotalBookingPrice();
     }
-    for(i; i < customerNum_A + customerNum_B; i++){
+    for(i;  allCustomers[i]->getTotalBookingPrice() > totalSum * 0.1; i++){
+        customerNum_B++;
         totalSum_B += allCustomers[i]->getTotalBookingPrice();
     }
-    for(i; i < customerNum_A + customerNum_B + customerNum_C; i++){
+    for(i;  allCustomers[i]->getTotalBookingPrice() > totalSum * 0.1; i++){
+        customerNum_C++;
         totalSum_C += allCustomers[i]->getTotalBookingPrice();
     }
 
