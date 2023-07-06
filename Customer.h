@@ -15,6 +15,7 @@ class Customer {
     long id;
     std::string name;
     std::vector<std::shared_ptr<Travel>> travelList;
+    double totalBookingPrice{};
 
 public:
     Customer(long _id, std::string _name);
@@ -25,7 +26,11 @@ public:
 
     const std::string &getName() const;
 
-    const std::vector<std::shared_ptr<Travel>> &getTravelList() const;
+    std::vector<std::shared_ptr<Travel>> getTravelList() ;
+
+    double getTotalBookingPrice() const;
+
+    void setTotalBookingPrice(double totalBookingPrice);
 };
 
 

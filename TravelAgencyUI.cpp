@@ -17,6 +17,7 @@
 #include <QFormLayout>
 #include <QDateEdit>
 #include <QComboBox>
+#include "TravelCheck.h"
 
 TravelAgencyUI::TravelAgencyUI(std::shared_ptr<TravelAgency> _travelAgency, QWidget *parent) : QMainWindow(parent),
                                                                                ui(new Ui::TravelAgencyUI),
@@ -38,6 +39,7 @@ TravelAgencyUI::TravelAgencyUI(std::shared_ptr<TravelAgency> _travelAgency, QWid
     connect(ui->actionHinzuf_gen_2, SIGNAL(triggered(bool)), this, SLOT(onAddBooking()));
     connect(ui->actionSpeichern, SIGNAL(triggered(bool)), this, SLOT(onSaveBookings()));
     connect(ui->actionPruefen, SIGNAL(triggered(bool)), this, SLOT(onCheckTravels()));
+    connect(ui->actionabc_Analyse, SIGNAL(triggered(bool)), this, SLOT(onAbcAnalysis()));
 
     ui->customerGroupBox->setVisible(false);
     ui->customerTravelsTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -535,7 +537,7 @@ void TravelAgencyUI::onAddBooking() {
             std::shared_ptr<Booking> booking;
             long travelId = travelAgency->getNextTravelId();
             std::string bookingId = QUuid::createUuid().toString().toStdString();
-            if(addedBooking == "Flight"){
+            /*if(addedBooking == "Flight"){
                 booking = std::shared_ptr<Booking>(new FlightBooking(bookingId, price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
                                             travelId, {}, travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
                                             travelAgency->getIataCode(toDestCombobox->currentText().toStdString()),
@@ -557,6 +559,7 @@ void TravelAgencyUI::onAddBooking() {
                                                                             pickupLongitude->text().toStdString() + "," + pickupLatitude->text().toStdString(),
                                                                             returnLongitude->text().toStdString() + "," + returnLatitude->text().toStdString()));
             }
+             */
             long customerId = QInputDialog::getInt(this, "KundenId", "Zu welchem Kunden soll die Reise hinzugefügt werden");
             std::shared_ptr<Customer> customer = travelAgency->findCustomer(customerId);
             if(customer == nullptr){
@@ -699,7 +702,7 @@ void TravelAgencyUI::onAddBooking() {
             }
             std::shared_ptr<Booking> booking;
             std::string bookingId = QUuid::createUuid().toString().toStdString();
-            if(addedBooking == "Flight"){
+            /*if(addedBooking == "Flight"){
 
                 booking = std::shared_ptr<Booking>(new FlightBooking(bookingId, price->value(), fromDate->date().toString("yyyyMMdd").toStdString(), toDate->date().toString("yyyyMMdd").toStdString(),
                                                                      travelId, {}, travelAgency->getIataCode(fromDestCombobox->currentText().toStdString()),
@@ -723,6 +726,7 @@ void TravelAgencyUI::onAddBooking() {
                                                                             pickupLongitude->text().toStdString() + "," + pickupLatitude->text().toStdString(),
                                                                             returnLongitude->text().toStdString() + "," + returnLatitude->text().toStdString()));
             }
+             */
 
 
             travel->addBooking(booking);
@@ -782,5 +786,11 @@ void TravelAgencyUI::onSaveBookings() {
 
 void TravelAgencyUI::onCheckTravels() {
 
+    TravelCheck* b = new TravelCheck(travelAgency);
+}
+
+void TravelAgencyUI::onAbcAnalysis() {
+    std::cout << travelAgency->abcAnalysis();
+    //QMessageBox::information(this, "ABC-Analyse", QString::fromStdString(travelAgency->abcAnalysis()));
 }
 

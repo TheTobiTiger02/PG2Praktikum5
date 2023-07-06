@@ -19,7 +19,7 @@ private:
     std::string returnCoordinates;
 
 public:
-    RentalCarReservation(std::string id, double price, std::string fromDate, std::string toDate, long travelId, std::vector<std::string> predecessors,
+    RentalCarReservation(std::string id, double price, std::string fromDate, std::string toDate, long travelId, std::string predecessor1, std::string predecessor2,
                          std::string _pickupLocation, std::string _returnLocation, std::string _company,
                          std::string _vehicleClass, std::string _pickupCoordinates, std::string returnCoordinates);
 

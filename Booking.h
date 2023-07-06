@@ -16,10 +16,10 @@ protected:
     std::string fromDate;
     std::string toDate;
     long travelId;
-    std::vector<std::string> predecessors;
+    std::string predecessor1, predecessor2;
 
 public:
-    Booking(std::string _id, double _price, std::string _fromDate, std::string _toDate, long _travelId, std::vector<std::string> predecessors);
+    Booking(std::string _id, double _price, std::string _fromDate, std::string _toDate, long _travelId, std::string predecessor1, std::string predecessor2);
 
     virtual ~Booking();
 
@@ -46,6 +46,11 @@ public:
     void setToDate(const std::string &toDate);
 
     void setTravelId(long travelId);
+
+    const std::string &getPredecessor1() const;
+
+    const std::string &getPredecessor2() const;
+
 };
 
 

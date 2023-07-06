@@ -325,9 +325,10 @@ void Graph<T, maxVertices>::printVertex(int n) {
         else
             color = "BLACK";
     }
-    cout << "Nummer: " << n << " Wert: " << getVertexValue(n) << " Ordnung: " << getOrd(n)
+    /*cout << "Nummer: " << n << " Wert: " << getVertexValue(n) << " Ordnung: " << getOrd(n)
          << " Farbe: " << setw(6) << color << " Start: " << getStart(n) << " Ende: " << getEnd(n)
          << " Vorgaenger: " << getPredecessor(n) << endl;
+         */
 }
 
 template <class T, int maxVertices>

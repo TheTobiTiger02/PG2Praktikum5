@@ -20,7 +20,7 @@ private:
     long id;
     long customerId;
     std::vector<std::shared_ptr<Booking>> travelBookings;
-    Graph<std::shared_ptr<Booking>, 10>* graph;
+    Graph<std::shared_ptr<Booking>, 20>* graph;
 
 public:
     Travel(long _id, long _customerId);
@@ -31,7 +31,7 @@ public:
 
     long getCustomerId() const;
 
-    const std::vector<std::shared_ptr<Booking>> &getTravelBookings() const;
+    std::vector<std::shared_ptr<Booking>> getTravelBookings();
 
     QDate getStartDate();
 

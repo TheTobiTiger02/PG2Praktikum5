@@ -73,6 +73,8 @@ public:
     std::string getBookingClassChar(std::string bookingClass);
     std::string getRoomTypeAcronym(std::string roomType);
 
+    std::string abcAnalysis();
+
 
 };
 

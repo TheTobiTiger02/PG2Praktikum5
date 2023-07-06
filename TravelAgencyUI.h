@@ -76,6 +76,8 @@ private slots:
 
     void onCheckTravels();
 
+    void onAbcAnalysis();
+
 };
 
 
