@@ -7,9 +7,9 @@
 
 using namespace std;
 
-FlightBooking::FlightBooking(std::string id, double price, std::string fromDate, std::string toDate, long travelId, std::vector<std::string> predecessors,
+FlightBooking::FlightBooking(std::string id, double price, std::string fromDate, std::string toDate, long travelId, std::string predecessor1, std::string predecessor2,
                              std::string _fromDestination, std::string _toDestination, std::string _airline,
-                             std::string bookingClass, std::string fromDestCoordinates, std::string toDestCoordinates) : Booking(id, price, fromDate, toDate, travelId, predecessors),
+                             std::string bookingClass, std::string fromDestCoordinates, std::string toDestCoordinates) : Booking(id, price, fromDate, toDate, travelId, predecessor1, predecessor2),
                                                  fromDestination(_fromDestination), toDestination(_toDestination),
                                                  airline(_airline), bookingClass(bookingClass), fromDestCoordinates(fromDestCoordinates), toDestCoordinates(toDestCoordinates) {
 

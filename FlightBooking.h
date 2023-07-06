@@ -23,7 +23,7 @@ private:
 
 
 public:
-    FlightBooking(std::string id, double price, std::string fromDate, std::string toDate, long travelId, std::vector<std::string> predecessors,
+    FlightBooking(std::string id, double price, std::string fromDate, std::string toDate, long travelId, std::string predecessor1, std::string predecessor2,
                   std::string _fromDestination, std::string _toDestination, std::string _airline, std::string bookingClass,
                   std::string fromDestCoordinates, std::string toDestCoordinates);
 

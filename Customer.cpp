@@ -20,6 +20,14 @@ const std::string &Customer::getName() const {
     return name;
 }
 
-const std::vector<std::shared_ptr<Travel>> &Customer::getTravelList() const {
+std::vector<std::shared_ptr<Travel>> Customer::getTravelList()  {
     return travelList;
+}
+
+double Customer::getTotalBookingPrice() const {
+    return totalBookingPrice;
+}
+
+void Customer::setTotalBookingPrice(double totalBookingPrice) {
+    this->totalBookingPrice = totalBookingPrice;
 }

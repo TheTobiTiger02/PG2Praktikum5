@@ -4,13 +4,13 @@
 
 #include "Booking.h"
 
-Booking::Booking(std::string _id, double _price, std::string _fromDate, std::string _toDate, long _travelId, std::vector<std::string> predecessors) : id(_id),
+Booking::Booking(std::string _id, double _price, std::string _fromDate, std::string _toDate, long _travelId, std::string predecessor1, std::string predecessor2) : id(_id),
                                                                                                                price(_price),
                                                                                                                fromDate(
                                                                                                                        _fromDate),
                                                                                                                toDate(_toDate),
                                                                                                                travelId(
-                                                                                                                       _travelId), predecessors(predecessors) {
+                                                                                                                       _travelId), predecessor1(predecessor1), predecessor2(predecessor2) {
 }
 
 Booking::~Booking() {
@@ -57,8 +57,15 @@ void Booking::setTravelId(long travelId) {
     Booking::travelId = travelId;
 }
 
-const std::vector<std::string> &Booking::getPredecessors() const {
-    return predecessors;
+const std::string &Booking::getPredecessor1() const {
+    return predecessor1;
 }
+
+const std::string &Booking::getPredecessor2() const {
+    return predecessor2;
+}
+
+
+
 
 

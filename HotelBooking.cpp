@@ -7,9 +7,9 @@
 
 using namespace std;
 
-HotelBooking::HotelBooking(std::string id, double price, std::string fromDate, std::string toDate, long travelId, std::vector<std::string> predecessors,
+HotelBooking::HotelBooking(std::string id, double price, std::string fromDate, std::string toDate, long travelId, std::string predecessor1, std::string predecessor2,
                            std::string _hotel,
-                           std::string _town, std::string _roomType, std::string hotelCoordinates) : Booking(id, price, fromDate, toDate, travelId, predecessors),
+                           std::string _town, std::string _roomType, std::string hotelCoordinates) : Booking(id, price, fromDate, toDate, travelId, predecessor1, predecessor2),
                                                                        hotel(_hotel), town(_town), roomType(_roomType), hotelCoordinates(hotelCoordinates) {
 
 }

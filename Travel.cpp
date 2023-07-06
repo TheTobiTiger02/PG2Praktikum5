@@ -4,14 +4,16 @@
 
 #include "Travel.h"
 #include "FlightBooking.h"
+#include "RentalCarReservation.h"
+#include "HotelBooking.h"
 
 Travel::Travel(long _id, long _customerId) : id(_id), customerId(_customerId) {
-    graph = new Graph<std::shared_ptr<Booking>, 10>;
+    graph = new Graph<std::shared_ptr<Booking>, 20>;
 }
 
 void Travel::addBooking(std::shared_ptr<Booking> booking) {
     travelBookings.push_back(booking);
-    graph->insertVertex(travelBookings.size(), booking);
+    graph->insertVertex(travelBookings.size() - 1, booking);
     /*if(!graph->getVertexValue(1)->getPredecessors()[0].empty()){
         std::string test = graph->getVertexValue(1)->getId();
         std::cout << test;
@@ -27,7 +29,7 @@ long Travel::getCustomerId() const {
     return customerId;
 }
 
-const std::vector<std::shared_ptr<Booking>> &Travel::getTravelBookings() const {
+std::vector<std::shared_ptr<Booking>> Travel::getTravelBookings() {
     return travelBookings;
 }
 
@@ -55,11 +57,13 @@ QDate Travel::getEndDate() {
 }
 
 void Travel::topologicalSort() {
+
     struct VertexData {
         int vertexNumber;
         std::shared_ptr<Booking> vertexValue;
         int endTime;
     };
+
 
     std::string pre1Id = "";
     std::string pre2Id = "";
@@ -67,8 +71,8 @@ void Travel::topologicalSort() {
     int pre2 = -1;
 
     for(int i = 0; i < travelBookings.size(); i++){
-        if(!graph->getVertexValue(i)->getPredecessors()[0].empty()){
-            pre1Id = graph->getVertexValue(i)->getPredecessors()[0];
+        if(!graph->getVertexValue(i)->getPredecessor1().empty()){
+            pre1Id = graph->getVertexValue(i)->getPredecessor1();
             for(int j = 0; j < travelBookings.size(); j++){
                 if(pre1Id == travelBookings[j]->getId()){
                     pre1 = j;
@@ -77,8 +81,8 @@ void Travel::topologicalSort() {
             }
             graph->insertEdge(pre1, i);
         }
-        if(!graph->getVertexValue(i)->getPredecessors()[1].empty()){
-            pre2Id = graph->getVertexValue(i)->getPredecessors()[1];
+        if(!graph->getVertexValue(i)->getPredecessor2().empty()){
+            pre2Id = graph->getVertexValue(i)->getPredecessor2();
             for(int j = 0; j < travelBookings.size(); j++){
                 if(pre2Id == travelBookings[j]->getId()){
                     pre2 = j;
@@ -125,5 +129,77 @@ bool Travel::checkRoundTrip() {
 }
 
 bool Travel::checkEnoughHotels() {
+    QDate currentDate;
+    for(int i = 0; i < travelBookings.size(); i++){
+        if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(travelBookings[i])){
+            continue;
+        }
+        currentDate = travelBookings[i]->getToDate();
 
+        if(i + 1 < travelBookings.size()){
+            if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(travelBookings[i + 1])){
+                continue;
+            }
+            if(travelBookings[i + 1]->getFromDate() > currentDate){
+                return false;
+            }
+        }
+
+    }
+    return true;
+
+}
+
+bool Travel::checkNoUselessHotels() {
+    QDate currentStartDate, currentEndDate;
+    for(int i = 0; i < travelBookings.size(); i++){
+        if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(travelBookings[i])){
+            continue;
+        }
+        currentStartDate = travelBookings[i]->getFromDate();
+        currentEndDate = travelBookings[i]->getToDate();
+
+        if(i + 1 < travelBookings.size()){
+            if(std::shared_ptr<RentalCarReservation> rentalCarReservation = dynamic_pointer_cast<RentalCarReservation>(travelBookings[i + 1])){
+                continue;
+            }
+            if(currentStartDate > travelBookings[i + 1]->getFromDate()){
+                return false;
+            }
+            if(currentEndDate > travelBookings[i + 1]->getToDate()){
+                return false;
+            }
+
+        }
+
+
+    }
+    return true;
+}
+
+bool Travel::checkNoUselessRentalCars() {
+    QDate currentStartDate, currentEndDate;
+    for(int i = 0; i < travelBookings.size(); i++){
+        if(std::shared_ptr<HotelBooking> hotelBooking = dynamic_pointer_cast<HotelBooking>(travelBookings[i])){
+            continue;
+        }
+        currentStartDate = travelBookings[i]->getFromDate();
+        currentEndDate = travelBookings[i]->getToDate();
+
+        if(i + 1 < travelBookings.size()){
+            if(std::shared_ptr<HotelBooking> hotelBooking = dynamic_pointer_cast<HotelBooking>(travelBookings[i + 1])){
+                continue;
+            }
+            if(currentStartDate > travelBookings[i + 1]->getFromDate()){
+                return false;
+            }
+            if(currentEndDate > travelBookings[i + 1]->getToDate()){
+                return false;
+            }
+
+        }
+
+
+    }
+    return true;
 }

@@ -53,7 +53,8 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
 
     shared_ptr<Booking> booking;
     for (int i = startRow; i < data.size(); i++) {
-        std::vector<std::string> predecessors;
+        std::string predecessor1 = "";
+        std::string predecessor2 = "";
         try {
             if (data.at(i)["type"].is_null() || data.at(i)["type"].empty() ||
                 data.at(i)["type"].get<string>().length() == 0) {
@@ -78,10 +79,10 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
                 throw runtime_error("Leeres Attribut 'travelId' in Zeile " + to_string(i + 1));
             }
             if(!data.at(i)["predecessor1"].is_null() && !data.at(i)["predecessor1"].empty()){
-                predecessors.push_back(data.at(i)["predecessor1"]);
+                predecessor1 = data.at(i)["predecessor1"];
             }
             if(!data.at(i)["predecessor2"].is_null() && !data.at(i)["predecessor2"].empty()){
-                predecessors.push_back(data.at(i)["predecessor2"]);
+                predecessor2 = data.at(i)["predecessor2"];
             }
 
             type = data.at(i)["type"];
@@ -136,7 +137,7 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
                     throw runtime_error("Leeres Attribut 'toDestLongitude' in Zeile " + to_string(i + 1));
                 }
 
-                booking = std::shared_ptr<FlightBooking>(new FlightBooking(id, price, fromDate, toDate, travelId, predecessors, data.at(i)["fromDest"],
+                booking = std::shared_ptr<FlightBooking>(new FlightBooking(id, price, fromDate, toDate, travelId, predecessor1, predecessor2, data.at(i)["fromDest"],
                                             data.at(i)["toDest"], data.at(i)["airline"],
                                             bookingClasses[data.at(i)["bookingClass"]],
                                             data.at(i)["fromDestLongitude"].get<string>() + "," + data.at(i)["fromDestLatitude"].get<string>(),
@@ -165,7 +166,7 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
                     data.at(i)["hotelLongitude"].get<string>().length() == 0) {
                     throw runtime_error("Leeres Attribut 'hotelLongitude' in Zeile " + to_string(i + 1));
                 }
-                booking = std::shared_ptr<HotelBooking>(new HotelBooking(id, price, fromDate, toDate, travelId, predecessors, data.at(i)["hotel"],
+                booking = std::shared_ptr<HotelBooking>(new HotelBooking(id, price, fromDate, toDate, travelId, predecessor1, predecessor2, data.at(i)["hotel"],
                                            data.at(i)["town"], roomTypes[data.at(i)["roomType"]], data.at(i)["hotelLongitude"].get<string>() + "," + data.at(i)["hotelLatitude"].get<string>()));
                 hotelCount++;
                 totalPrice += price;
@@ -202,7 +203,7 @@ TravelAgency::readFile(string filePath, int startRow, int flightCount, int hotel
                     data.at(i)["returnLongitude"].get<string>().length() == 0) {
                     throw runtime_error("Leeres Attribut 'returnLongitude' in Zeile " + to_string(i + 1));
                 }
-                booking = std::shared_ptr<RentalCarReservation> (new RentalCarReservation(id, price, fromDate, toDate, travelId, predecessors, data.at(i)["pickupLocation"],
+                booking = std::shared_ptr<RentalCarReservation> (new RentalCarReservation(id, price, fromDate, toDate, travelId, predecessor1, predecessor2, data.at(i)["pickupLocation"],
                                                    data.at(i)["returnLocation"], data.at(i)["company"],
                                                    data.at(i)["vehicleClass"], data.at(i)["pickupLongitude"].get<string>() + "," + data.at(i)["pickupLatitude"].get<string>(),
                                                    data.at(i)["returnLongitude"].get<string>() + "," + data.at(i)["returnLatitude"].get<string>()));
@@ -543,6 +544,12 @@ bool TravelAgency::saveToJson(SortFunktor funktor, std::string filePath) {
         bookingJson["fromDate"] = b->getFromDate().toString("yyyyMMdd").toStdString();
         bookingJson["toDate"] = b->getToDate().toString("yyyyMMdd").toStdString();
         bookingJson["travelId"] = b->getTravelId();
+        if(!b->getPredecessor1().empty()){
+            bookingJson["predecessor1"] = b->getPredecessor1();
+        }
+        if(!b->getPredecessor2().empty()){
+            bookingJson["predecessor2"] = b->getPredecessor2();
+        }
         std::shared_ptr<Travel> travel = findTravel(b->getTravelId());
         std::shared_ptr<Customer> customer = findCustomer(travel->getCustomerId());
         bookingJson["customerId"] = customer->getId();
@@ -590,5 +597,91 @@ bool TravelAgency::saveToJson(SortFunktor funktor, std::string filePath) {
     outputStream.close();
     return true;
 
+}
+
+std::string TravelAgency::abcAnalysis() {
+
+    if(allCustomers.empty()){
+        return "Es sind keine Kunden vorhanden";
+    }
+
+    /*  Crash
+     * for(auto c : allCustomers){
+        double totalSumCustomer{};
+        for(auto t : c->getTravelList()){
+            for(auto b : t->getTravelBookings()){
+                totalSumCustomer += b->getPrice();
+            }
+        }
+        c->setTotalBookingPrice(totalSumCustomer);
+    }
+     */
+
+    for(auto c : allCustomers){
+        double totalSumCustomer{};
+        for(auto t : allTravels){
+            if(t->getCustomerId() == c->getId()){
+                for(auto b : allBookings){
+                    if(b->getTravelId() == t->getId()){
+                        totalSumCustomer += b->getPrice();
+                    }
+                }
+            }
+
+        }
+        //std::cout << "Test";
+        c->setTotalBookingPrice(totalSumCustomer);
+    }
+
+
+
+    std::sort(allCustomers.begin(), allCustomers.end(), [](std::shared_ptr<Customer> a, std::shared_ptr<Customer> b){
+        return a->getTotalBookingPrice() <= b->getTotalBookingPrice();
+    });
+
+    int customersNum = allCustomers.size();
+    int customerNum_A = customersNum * 0.8;
+    int customerNum_B = customersNum * 0.1;
+    int customerNum_C = customersNum * 0.1;
+
+    while(customerNum_A+customerNum_B+customerNum_C != customersNum){
+        customerNum_A++;
+    }
+
+    double totalSum_A{};
+    double totalSum_B{};
+    double totalSum_C{};
+
+
+    int i = 0;
+    for(i; i < customerNum_A; i++){
+        totalSum_A += allCustomers[i]->getTotalBookingPrice();
+    }
+    for(i; i < customerNum_A + customerNum_B; i++){
+        totalSum_B += allCustomers[i]->getTotalBookingPrice();
+    }
+    for(i; i < customerNum_A + customerNum_B + customerNum_C; i++){
+        totalSum_C += allCustomers[i]->getTotalBookingPrice();
+    }
+
+    double averageSumCustomer_A = totalSum_A / customerNum_A;
+    double averageSumCustomer_B = totalSum_B / customerNum_B;
+    double averageSumCustomer_C = totalSum_C / customerNum_C;
+
+    std::string abc = "Kategorie A (Top 80% der Kunden, 80% des Umsatzes):\n";
+    abc += "\tKundenanzahl: " + std::to_string(customerNum_A) + "\n";
+    abc += "\tGesamtumsatz dieser Kunden: " + std::to_string(totalSum_A) + " €\n";
+    abc += "\tDurchschnittlicher Umsatz pro Kunde: " + std::to_string(averageSumCustomer_A) + " €\n";
+    abc += "Kategorie B (Mittlere 10% der Kunden, 10% des Umsatzes):\n";
+    abc += "\tKundenanzahl: " + std::to_string(customerNum_B) + "\n";
+    abc += "\tGesamtumsatz dieser Kunden: " + std::to_string(totalSum_B) + " €\n";
+    abc += "\tDurchschnittlicher Umsatz pro Kunde: " + std::to_string(averageSumCustomer_B) + " €\n";
+    abc += "Kategorie C (Untere 10% der Kunden, 10% des Umsatzes):\n";
+    abc += "\tKundenanzahl: " + std::to_string(customerNum_C) + "\n";
+    abc += "\tGesamtumsatz dieser Kunden: " + std::to_string(totalSum_C) + " €\n";
+    abc += "\tDurchschnittlicher Umsatz pro Kunde: " + std::to_string(averageSumCustomer_C) + " €\n";
+
+
+    return abc;
 }
 
