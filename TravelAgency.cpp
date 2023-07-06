@@ -601,21 +601,30 @@ bool TravelAgency::saveToJson(SortFunktor funktor, std::string filePath) {
 
 std::string TravelAgency::abcAnalysis() {
 
+    if(allCustomers.empty()){
+        return "Es sind keine Kunden vorhanden";
+    }
 
-    std::cout << allCustomers[1]->getId();
+
     for(auto c : allCustomers){
         double totalSumCustomer{};
-        for(auto t : c->getTravelList()){
-            for(auto b : t->getTravelBookings()){
-                //std::cout << b->getPrice() << " ";
-                totalSumCustomer += b->getPrice();
+        for(auto t : allTravels){
+            if(t->getCustomerId() == c->getId()){
+                for(auto b : allBookings){
+                    if(b->getTravelId() == t->getId()){
+                        totalSumCustomer += b->getPrice();
+                    }
+                    //std::cout << b->getPrice() << " ";
+                }
             }
+
 
 
         }
         //std::cout << "Test";
         c->setTotalBookingPrice(totalSumCustomer);
     }
+
 
 
     std::sort(allCustomers.begin(), allCustomers.end(), [](std::shared_ptr<Customer> a, std::shared_ptr<Customer> b){
@@ -626,6 +635,10 @@ std::string TravelAgency::abcAnalysis() {
     int customerNum_A = customersNum * 0.8;
     int customerNum_B = customersNum * 0.1;
     int customerNum_C = customersNum * 0.1;
+
+    if(customerNum_A+customerNum_B+customerNum_C != customersNum){
+        customerNum_A++;
+    }
 
     double totalSum_A{};
     double totalSum_B{};

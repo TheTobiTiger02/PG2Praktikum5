@@ -807,7 +807,7 @@ void TravelAgencyUI::onCheckTravels() {
 }
 
 void TravelAgencyUI::onAbcAnalysis() {
-    std::cout << travelAgency->abcAnalysis();
-    //QMessageBox::information(this, "ABC-Analyse", QString::fromStdString(travelAgency->abcAnalysis()));
+    //std::cout << travelAgency->abcAnalysis();
+    QMessageBox::information(this, "ABC-Analyse", QString::fromStdString(travelAgency->abcAnalysis()));
 }
 
